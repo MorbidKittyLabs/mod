@@ -6,6 +6,14 @@ includes("xmake/dependencies/common.lua")
 set_languages("c++23")
 set_runtimes("MT")
 
+target("occupied-node-cycle-tests")
+    set_kind("binary")
+    set_default(false)
+    add_files("tests/occupied_node_cycle.cc")
+    add_includedirs("mods/src")
+    set_exceptions("cxx")
+target_end()
+
 includes("xmake/rules/stfc_identity.lua")
 
 if is_plat("windows") then

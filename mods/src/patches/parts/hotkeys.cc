@@ -49,6 +49,7 @@
 #include "patches/parts/daily_faction_bulk_claim.h"
 #include "patches/parts/double_click_assign_ship.h"
 #include "patches/parts/focus_search.h"
+#include "patches/parts/occupied_node_inspection.h"
 #include "str_utils.h"
 
 #include <il2cpp-tabledefs.h>
@@ -1173,6 +1174,8 @@ void ScreenManager_Update_Hook(auto original, ScreenManager* _this)
     }
   }
 
+  occupied_node_inspection::Update();
+
   if (!Key::IsInputFocused()) {
     // Lets try to remove the pre-scan because we hit escape and it's visible
     if (Key::Pressed(KeyCode::Escape)) {
@@ -1209,7 +1212,7 @@ void ScreenManager_Update_Hook(auto original, ScreenManager* _this)
 
     DailyFactionBulkClaimUpdate();
 
-    if (MapKey::IsDown(GameFunction::ActionView)) {
+    if (MapKey::IsDown(GameFunction::ActionView) && !occupied_node_inspection::HandleActionView()) {
       auto all_pre_scan_widgets = ObjectFinder<PreScanTargetWidget>::GetAll();
 
       for (auto& pre_scan_widget : all_pre_scan_widgets) {
