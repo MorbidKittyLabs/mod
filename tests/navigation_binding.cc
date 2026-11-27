@@ -9,12 +9,12 @@
 #include <stdexcept>
 
 namespace {
-Il2CppClass receiver_class{}, base_class{}, value_class{};
+Il2CppClass receiver_class, base_class, value_class;
 Il2CppObject receiver{}, boxed{};
 Il2CppType boolean_type{}, int64_type{}, wrong_type{};
 const Il2CppType* parameters[] = {&int64_type};
 MethodInfo method{};
-bool answer = true, throws_managed = false, null_box = false, null_data = false, static_binding = false;
+bool answer = true, throws_managed = false, null_box = false, null_data = false, receiver_matches = true;
 int invocations = 0;
 int64_t observed_id = 0;
 }
@@ -53,7 +53,7 @@ END_API
 API(Il2CppObject*, il2cpp_runtime_invoke, (const MethodInfo*, void* object, void** args, Il2CppException** exception))
 {
   ++invocations;
-  if (!static_binding && object != &receiver) throw std::runtime_error("wrong receiver");
+  receiver_matches = receiver_matches && object == &receiver;
   observed_id = args ? *static_cast<int64_t*>(args[0]) : 0;
   if (throws_managed) *exception = reinterpret_cast<Il2CppException*>(&boxed);
   return null_box ? nullptr : &boxed;
@@ -73,7 +73,7 @@ int main()
   method.invoker_method = reinterpret_cast<InvokerMethod>(1);
   const int64_t id = 0x12345678abcdefLL;
   Require(navigation_binding::Select(&receiver, "SelectPoi", id));
-  Require(observed_id == id && invocations == 1); // Windows must not truncate Int64
+  Require(observed_id == id && invocations == 1 && receiver_matches); // Windows must not truncate Int64
   answer = false;
   Require(!navigation_binding::Select(&receiver, "SelectPoi", id));
   answer = true;
