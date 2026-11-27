@@ -109,6 +109,10 @@ void Update()
     Cancel("cancelled: section, selection or binding timeout");
     return;
   }
+  if (selected.ship && selected.fleet > 0 && selected.fleet != cycle.occupant) {
+    Cancel("cancelled: displayed fleet changed");
+    return;
+  }
   if (cycle.phase == Cycle::Phase::AwaitNode && selected.mine && selected.poi == cycle.node) {
     // Selection success alone is insufficient; wait for the native node card.
     Cancel("restored original node");
@@ -149,7 +153,11 @@ bool HandleActionView()
     const auto fleet_id = Id(Object(target));
     if (!target || !target->TryGetFleetType(fleet_type) || fleet_type != DeployedFleetType::Player
         || !ReadAddress(poi_address, node_address) || node_address != address
-        || !cycle.Begin(address, selected.poi, fleet_id, Now())) return false;
+        || !cycle.Begin(address, selected.poi, fleet_id, Now())) {
+      spdlog::warn("[OccupiedNode] cannot capture original node identity node={} occupant={}",
+                   selected.poi, fleet_id);
+      return true;
+    }
     if (!navigation->CanSelectPoi(fleet_id) || !navigation->SelectPoi(fleet_id)) {
       Cancel("occupant selection failed");
       return true;

@@ -35,6 +35,17 @@ includes("xmake/rules/protobuf_sccache.lua")
 includes("xmake/rules/cxx_sccache.lua")
 includes("mods")
 
+target("navigation-binding-tests")
+    set_kind("binary")
+    set_default(false)
+    add_files("tests/navigation_binding.cc")
+    add_includedirs("mods/src")
+    add_packages("libil2cpp", "eastl")
+    set_exceptions("cxx")
+    if is_plat("windows") then
+        add_linkdirs("mods/src/il2cpp")
+    end
+
 target("il2cpp-checked-tests")
     set_kind("binary")
     set_default(false)

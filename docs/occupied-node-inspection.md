@@ -14,7 +14,7 @@ Native MineClicked/OnEngageButtonClicked/OnScanButtonClicked paths are untouched
 Saved inspection IDs are never passed to an attack or course-setting method.
 The third press resolves the current node POI again; the next inspection resolves
 its occupant again, so a replacement is never substituted into a saved attack.
-No private controller, automation, repair or hostile-selection code is included.
+The change is limited to native occupied-node inspection.
 
 ## Metadata evidence
 
